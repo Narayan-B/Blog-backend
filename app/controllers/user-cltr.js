@@ -30,7 +30,6 @@ userCltr.Login=async(req,res)=>{
     const body=req.body
     try{
         const user=await User.findOne({email:body.email})
-        console.log(user._id)
         if(user){
             const isAuth=await bcryptjs.compare(body.password,user.password)
             if(isAuth){

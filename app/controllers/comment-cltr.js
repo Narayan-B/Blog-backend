@@ -28,7 +28,7 @@ commentCltr.list=async(req,res)=>{
     try{
         const id=req.params.postId
         //console.log(id)
-        const comments=await Comment.find({post:id})
+        const comments=await Comment.find({post:id}).populate('author','username')
         if(!comments){
             return res.status(400).json('no comments for this post')
         }

@@ -17,7 +17,7 @@ const port = 4444;
 app.use(helmet());
 app.use(express.json());
 app.use(cors());
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Logging
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogStream }));
@@ -49,6 +49,7 @@ const commentValidationSchema = require('./app/validations/comment-validation');
 const commentCltr = require('./app/controllers/comment-cltr');
 const profileCltr = require('./app/controllers/profile-cltr');
 const profileValidationSchema = require('./app/validations/profile-validation');
+const profileUpdateValidationSchema = require('./app/validations/profile-update-validation');
 
 // User routes
 app.post('/api/users/register', checkSchema(userRegisterValidationSchema), userCltr.Register);
@@ -56,6 +57,8 @@ app.post('/api/users/login', checkSchema(userLoginValidationSchema), userCltr.Lo
 app.get('/api/users/account', authenticateUser, authorizeUser(['user']), userCltr.account);
 app.get('/checkemail', userCltr.checkEmail);
 app.post('/api/users/profile',authenticateUser,authorizeUser(['user']),checkSchema(profileValidationSchema),uploads.single('profile'),profileCltr.create)
+app.get('/api/users/profile',authenticateUser,authorizeUser(['user']),profileCltr.see)
+app.put('/api/users/profile',authenticateUser,authorizeUser(['user']),checkSchema(profileUpdateValidationSchema),uploads.single('profile'),profileCltr.update)
 // Post routes
 app.post('/api/posts', authenticateUser, authorizeUser(['user']), checkSchema(postCreateValidationSchema), postCltr.create);
 app.get('/api/posts', postCltr.allPosts);
